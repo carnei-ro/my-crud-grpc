@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option go_package = "github.com/carnei-ro/my-crud-grpc/protos;protos";
+option java_multiple_files = true;
+option java_package = "ro.carnei.mycrudgrpc.protos";
+option java_outer_classname = "MyCrudGrpcProtos";
+option objc_class_prefix = "MYCRUD";
+
+package mycrudgrpc;
+
+// The service definition.
+
+service Movie {
+  rpc GetMovies (Empty) returns (stream MovieInfo);
+  rpc GetMovie (Uuid) returns (MovieInfo);
+  rpc CreateMovie (MovieInfo) returns (Uuid);
+  rpc UpdateMovie (MovieInfo) returns (Status);
+  rpc DeleteMovie (Uuid) returns (Status);
+}
+
+message Empty {}
+
+message MovieInfo {
+  string uuid = 1;
+  string title = 2;
+  string description = 3;
+  Director director = 4;
+}
+
+message Director {
+  string name = 1;
+  string surname = 2;
+}
+
+message Uuid {
+  string uuid = 1;
+}
+
+message Status {
+  bool success = 1;
+}
