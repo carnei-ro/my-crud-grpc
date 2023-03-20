@@ -6,16 +6,43 @@ option java_package = "ro.carnei.mycrudgrpc.protos";
 option java_outer_classname = "MyCrudGrpcProtos";
 option objc_class_prefix = "MYCRUD";
 
+// import "google/api/annotations.proto";
+
 package mycrudgrpc;
 
 // The service definition.
 
 service Movie {
-  rpc GetMovies (Empty) returns (stream MovieInfo);
-  rpc GetMovie (Uuid) returns (MovieInfo);
-  rpc CreateMovie (MovieInfo) returns (Uuid);
-  rpc UpdateMovie (MovieInfo) returns (Status);
-  rpc DeleteMovie (Uuid) returns (Status);
+  rpc GetMovies (Empty) returns (stream MovieInfo) {
+    option (google.api.http) = {
+      get: "/v1/movies"
+      body: "*"
+    };
+  }
+  rpc GetMovie (Uuid) returns (MovieInfo) {
+    option (google.api.http) = {
+      get: "/v1/movies/{uuid}"
+      body: "*"
+    };
+  }
+  rpc CreateMovie (MovieInfo) returns (Uuid) {
+    option (google.api.http) = {
+      post: "/v1/movies"
+      body: "*"
+    };
+  }
+  rpc UpdateMovie (MovieInfo) returns (Status) {
+    option (google.api.http) = {
+      put: "/v1/movies/{uuid}"
+      body: "*"
+    };
+  }
+  rpc DeleteMovie (Uuid) returns (Status) {
+    option (google.api.http) = {
+      delete: "/v1/movies/{uuid}"
+      body: "*"
+    };
+  }
 }
 
 message Empty {}

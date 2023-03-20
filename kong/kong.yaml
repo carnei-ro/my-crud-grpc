@@ -1,0 +1,33 @@
+_format_version: "3.0"
+
+services:
+  - name: moviesapp
+    protocol: grpc
+    host: 172.17.0.1
+    port: 50051
+    routes:
+      - name: moviesapp
+        protocols:
+          - http
+        methods:
+          - POST
+          - GET
+        paths:
+          - ~/v1/movies$
+        plugins:
+          - name: grpc-gateway
+            config:
+              proto: /tmp/protos/moviesapp.proto
+      - name: moviesapp-movie_uuid
+        protocols:
+          - http
+        methods:
+          - PUT
+          - GET
+          - DELETE
+        paths:
+          - ~/v1/movies/(?<movie_uuid>[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$
+        plugins:
+          - name: grpc-gateway
+            config:
+              proto: /tmp/protos/moviesapp.proto
