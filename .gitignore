@@ -1,0 +1,4 @@
+venv
+__pycache__
+moviesapp_pb2_grpc.py
+moviesapp_pb2.py
