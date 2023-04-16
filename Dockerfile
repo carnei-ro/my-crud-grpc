@@ -14,7 +14,7 @@ COPY requirements.txt .
 COPY protos ./protos
 RUN pip install -r requirements.txt --use-pep517
 RUN git clone https://github.com/googleapis/googleapis.git
-RUN python -m grpc_tools.protoc -I googleapis -I protos --python_out=. --grpc_python_out=. protos/moviesapp.proto
+RUN python -m grpc_tools.protoc -I googleapis -I protos --python_out=. --grpc_python_out=. --include_imports --include_source_info --descriptor_set_out=proto.descriptor protos/moviesapp.proto
 
 FROM python:3.11 AS app
 
@@ -30,6 +30,7 @@ RUN set -ex \
 
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /protoc/*.py "$APP_DIR/"
+COPY --from=builder /protoc/proto.descriptor "$APP_DIR/"
 
 COPY main.py "$APP_DIR"
 

@@ -87,3 +87,36 @@ curl -s localhost:8000/v1/movies/5e5cd7f4-14d5-4040-b983-4e592092fb58 | jq .
 # deleting a movie (uuid from adding movie command):
 curl -s -X DELETE localhost:8000/v1/movies/5e5cd7f4-14d5-4040-b983-4e592092fb58 | jq .
 ```
+
+## Istio and gRPC
+
+Note we are outputing the "Proto Descriptor" file from the gRPC server when building the image (see `Dockerfile`). (Note: flags `--include_imports` and `--include_source_info` are needed to make the file compatible with Envoy.)
+
+```bash
+python -m grpc_tools.protoc \
+  -I googleapis -I protos \
+  --python_out=. \
+  --grpc_python_out=. \
+  --include_imports \
+  --include_source_info \
+  # here \/
+  --descriptor_set_out=proto.descriptor \
+  protos/moviesapp.proto
+```
+
+This file is used by the Envoy proxy to convert the gRPC request to HTTP/1.1.
+
+The filter supports passing the proto descriptor file in two ways:
+
+- As a file in the local file system, using the `filename` field in the proto descriptor set configuration.
+- As a base64-encoded string, using the `inline_bytes` field in the proto descriptor set configuration.
+
+Let's use the second option, as it is easier to configure. Get the file from the container and convert it to base64.
+
+```bash
+docker run -it --rm --entrypoint=/bin/bash leandrocarneiro/my-crud-grpc:python -c "cat /app/proto.descriptor | base64 -w0"
+```
+
+Then use it in the `EnvoyFilter` resource, as `protoDescriptorBin` config.
+
+Check the `k8s-manifests` folder for the `EnvoyFilter` resource.
