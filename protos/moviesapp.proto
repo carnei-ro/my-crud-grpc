@@ -6,7 +6,7 @@ option java_package = "ro.carnei.mycrudgrpc.protos";
 option java_outer_classname = "MyCrudGrpcProtos";
 option objc_class_prefix = "MYCRUD";
 
-// import "google/api/annotations.proto";
+import "google/api/annotations.proto";
 
 package mycrudgrpc;
 

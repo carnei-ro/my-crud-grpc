@@ -13,7 +13,8 @@ WORKDIR /protoc
 COPY requirements.txt .
 COPY protos ./protos
 RUN pip install -r requirements.txt --use-pep517
-RUN python -m grpc_tools.protoc -I protos --python_out=. --grpc_python_out=. protos/moviesapp.proto
+RUN git clone https://github.com/googleapis/googleapis.git
+RUN python -m grpc_tools.protoc -I googleapis -I protos --python_out=. --grpc_python_out=. protos/moviesapp.proto
 
 FROM python:3.11 AS app
 
